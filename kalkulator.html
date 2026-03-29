@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RenzHub - Kalkulator</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transition: background 0.3s;
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .calculator {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark .calculator {
+            background: rgba(26, 32, 44, 0.95);
+            color: #f7fafc;
+        }
+
+        .display {
+            background: #f0f0f0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: right;
+            font-size: 2.5rem;
+            font-weight: 600;
+            word-wrap: break-word;
+            min-height: 100px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
+
+        body.dark .display {
+            background: #2d3748;
+            color: #f7fafc;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .btn {
+            background: white;
+            border: none;
+            padding: 1.5rem 0.5rem;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.dark .btn {
+            background: #4a5568;
+            color: #f7fafc;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.operator {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        body.dark .btn.operator {
+            background: linear-gradient(135deg, #9f7aea, #6b46c1);
+        }
+
+        .btn.equals {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .btn.clear {
+            background: linear-gradient(135deg, #f56565, #c53030);
+            color: white;
+        }
+
+        .btn.zero {
+            grid-column: span 2;
+        }
+
+        .theme-toggle {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .theme-toggle button {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: inherit;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="theme-toggle">
+            <button id="themeToggle">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun" style="display: none;"></i>
+                <span>Dark</span>
+            </button>
+        </div>
+
+        <div class="display" id="display">0</div>
+
+        <div class="buttons">
+            <button class="btn clear" onclick="clearDisplay()">C</button>
+            <button class="btn" onclick="deleteLast()"><i class="fas fa-backspace"></i></button>
+            <button class="btn operator" onclick="appendOperator('/')">÷</button>
+            <button class="btn operator" onclick="appendOperator('*')">×</button>
+
+            <button class="btn" onclick="appendNumber('7')">7</button>
+            <button class="btn" onclick="appendNumber('8')">8</button>
+            <button class="btn" onclick="appendNumber('9')">9</button>
+            <button class="btn operator" onclick="appendOperator('-')">-</button>
+
+            <button class="btn" onclick="appendNumber('4')">4</button>
+            <button class="btn" onclick="appendNumber('5')">5</button>
+            <button class="btn" onclick="appendNumber('6')">6</button>
+            <button class="btn operator" onclick="appendOperator('+')">+</button>
+
+            <button class="btn" onclick="appendNumber('1')">1</button>
+            <button class="btn" onclick="appendNumber('2')">2</button>
+            <button class="btn" onclick="appendNumber('3')">3</button>
+            <button class="btn equals" onclick="calculate()">=</button>
+
+            <button class="btn zero" onclick="appendNumber('0')">0</button>
+            <button class="btn" onclick="appendDecimal()">.</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2026 <a href="#">RenzHub</a> - Kalkulator Premium</p>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        let currentInput = '';
+        let previousInput = '';
+        let operator = null;
+
+        function updateDisplay(value) {
+            display.innerText = value || '0';
+        }
+
+        function appendNumber(num) {
+            currentInput += num;
+            updateDisplay(currentInput);
+        }
+
+        function appendOperator(op) {
+            if (currentInput === '') return;
+            if (previousInput !== '') {
+                calculate();
+            }
+            operator = op;
+            previousInput = currentInput;
+            currentInput = '';
+        }
+
+        function calculate() {
+            if (previousInput === '' || currentInput === '' || !operator) return;
+            let result;
+            const prev = parseFloat(previousInput);
+            const curr = parseFloat(currentInput);
+            switch (operator) {
+                case '+':
+                    result = prev + curr;
+                    break;
+                case '-':
+                    result = prev - curr;
+                    break;
+                case '*':
+                    result = prev * curr;
+                    break;
+                case '/':
+                    result = prev / curr;
+                    break;
+                default:
+                    return;
+            }
+            currentInput = result.toString();
+            operator = null;
+            previousInput = '';
+            updateDisplay(currentInput);
+        }
+
+        function clearDisplay() {
+            currentInput = '';
+            previousInput = '';
+            operator = null;
+            updateDisplay('0');
+        }
+
+        function deleteLast() {
+            currentInput = currentInput.slice(0, -1);
+            updateDisplay(currentInput || '0');
+        }
+
+        function appendDecimal() {
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+                updateDisplay(currentInput);
+            }
+        }
+
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = themeToggle.querySelector('.fa-sun');
+        const moonIcon = themeToggle.querySelector('.fa-moon');
+        const themeText = themeToggle.querySelector('span');
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            if (isDark) {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'inline-block';
+                themeText.textContent = 'Dark';
+            } else {
+                sunIcon.style.display = 'inline-block';
+                moonIcon.style.display = 'none';
+                themeText.textContent = 'Light';
+            }
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            const key = e.key;
+            if (key >= '0' && key <= '9') appendNumber(key);
+            else if (key === '.') appendDecimal();
+            else if (key === '+' || key === '-' || key === '*' || key === '/') appendOperator(key);
+            else if (key === 'Enter' || key === '=') calculate();
+            else if (key === 'Backspace') deleteLast();
+            else if (key === 'Escape') clearDisplay();
+            else if (key === 'c' || key === 'C') clearDisplay();
+        });
+    </script>
+</body>
+</html>
